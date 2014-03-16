@@ -1,18 +1,29 @@
 /* global require, console */
 
-require.config({paths: {d3: "http://d3js.org/d3.v3.min"}});
+require.config({
+    paths : { d3: "http://d3js.org/d3.v3.min" },
+    config : {
+        "datasources/generativeDatasource" : {
+            numberOfEvents : 10,
+            numberOfUsers  : 100
+        },
+        "datasources/d3datasource" : {
+            csvPath : "all data no minimum usage 10-03-2014.csv"
+        }
+    }
+});
 
-require(["d3", "datasource", "./utils/objectUtils", "matrix", "./d3scale"],
-        function(d3, datasource, objectUtils, matrix, d3scale) {
+require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix", "d3colorscale"],
+        function(d3, datasource, objectUtils, matrix, d3colorscale) {
     var minElementDimension = 5;
-    
+
     var realDataUrl = "all data no minimum usage 10-03-2014.csv";
     
     var setChartArea = function(chart, width, height) {        
         chart.attr("width", width)
              .attr("height", height);
     };
-    
+
     var calculateChartArea = function(data) {        
         return {
             height : data.length * minElementDimension,
@@ -48,7 +59,7 @@ require(["d3", "datasource", "./utils/objectUtils", "matrix", "./d3scale"],
         
         setChartArea(chart, dimensions.width, dimensions.height);
         
-        var scale = d3scale.getScale(m);
+        var scale = d3colorscale.getScale(m);
         
         // Add rows
         var rows = chart.selectAll("g")
