@@ -15,8 +15,6 @@ This project is intended to:
 ### todo
 
 - add column names
-- split datasource into d3 and generative
-    - make generated names amusing
 - sorting
 - selection of row
 - swap rows / columns?
