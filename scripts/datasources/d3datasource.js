@@ -1,7 +1,7 @@
 /* global define */
 
 define(["module", "../d3", "../utils/objectUtils"], function(module, d3, objectUtils) {
-    var csvPath = module.config().d3datasource.csvPath;
+    var csvPath = module.config().csvPath;
     
     var getDataFromCsv = function(pathToCsv, callback) {
         d3.csv(pathToCsv)

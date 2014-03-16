@@ -4,8 +4,8 @@ require.config({
     paths : { d3: "http://d3js.org/d3.v3.min" },
     config : {
         "datasources/generativeDatasource" : {
-            numberOfEvents : 10,
-            numberOfUsers  : 100
+            numberOfEvents : 100,
+            numberOfUsers  : 500
         },
         "datasources/d3datasource" : {
             csvPath : "all data no minimum usage 10-03-2014.csv"
@@ -17,8 +17,6 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
         function(d3, datasource, objectUtils, matrix, d3colorscale) {
     var minElementDimension = 5;
 
-    var realDataUrl = "all data no minimum usage 10-03-2014.csv";
-    
     var setChartArea = function(chart, width, height) {        
         chart.attr("width", width)
              .attr("height", height);
@@ -79,6 +77,5 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
             .attr("width", minElementDimension)
             .attr("height", minElementDimension)
             .attr("fill", function(d) { return getElementColour(scale, d); });
-    }/*,
-    realDataUrl*/);
+    });
 });
