@@ -2,7 +2,8 @@
 
 require.config({paths: {d3: "http://d3js.org/d3.v3.min"}});
 
-require(["d3", "datasource", "./utils/objectUtils", "matrix", "./lib/colorbrewer"], function(d3, datasource, objectUtils, matrix, colorbrewer) {
+require(["d3", "datasource", "./utils/objectUtils", "matrix", "./d3scale"],
+        function(d3, datasource, objectUtils, matrix, d3scale) {
     var minElementDimension = 5;
     
     var realDataUrl = "all data no minimum usage 10-03-2014.csv";
@@ -10,28 +11,6 @@ require(["d3", "datasource", "./utils/objectUtils", "matrix", "./lib/colorbrewer
     var setChartArea = function(chart, width, height) {        
         chart.attr("width", width)
              .attr("height", height);
-    };
-    
-    var calculateDomain = function(min, max, elements) {
-        var result = [],
-            range = max - min,
-            segmentWidth = range / (elements - 1),
-            index;
-        for (index = 0; index < elements; index++) {
-            result[index] = index * segmentWidth;
-        }
-        
-        return result;
-    };
-    
-    var getScale = function(matrix, colorbrewer) {
-        var numberOfColors = 9;
-        var domain = calculateDomain(0, matrix.max(), numberOfColors);
-        var scale = d3.scale.linear()
-            .domain(domain)
-            .range(colorbrewer.BuPu[numberOfColors].reverse());
-        
-        return scale;
     };
     
     var calculateChartArea = function(data) {        
@@ -69,7 +48,7 @@ require(["d3", "datasource", "./utils/objectUtils", "matrix", "./lib/colorbrewer
         
         setChartArea(chart, dimensions.width, dimensions.height);
         
-        var scale = getScale(m, colorbrewer);
+        var scale = d3scale.getScale(m);
         
         // Add rows
         var rows = chart.selectAll("g")
