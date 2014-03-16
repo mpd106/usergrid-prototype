@@ -13,8 +13,8 @@ require.config({
     }
 });
 
-require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix", "d3colorscale"],
-        function(d3, datasource, objectUtils, matrix, d3colorscale) {
+require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix", "d3colorscale", "d3axes"],
+        function(d3, datasource, objectUtils, matrix, d3colorscale, d3axes) {
     var minElementDimension = 5;
 
     var setChartArea = function(chart, width, height) {        
@@ -58,6 +58,7 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
         setChartArea(chart, dimensions.width, dimensions.height);
         
         var scale = d3colorscale.getScale(m);
+        var xAxisScale = d3axes.getAxisScale(m.colNames, 5);
         
         // Add rows
         var rows = chart.selectAll("g")
