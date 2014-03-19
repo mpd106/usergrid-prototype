@@ -1,11 +1,11 @@
 /* global define */
 define(["./d3", "./lib/colorbrewer"], function(d3, colorbrewer) {
-    var calculateDomain = function(min, max, elements) {
+    var calculateDomain = function(min, max, numElements) {
         var result = [],
             range = max - min,
-            segmentWidth = range / (elements - 1),
+            segmentWidth = range / (numElements - 1),
             index;
-        for (index = 0; index < elements; index++) {
+        for (index = 0; index < numElements; index++) {
             result[index] = index * segmentWidth;
         }
         

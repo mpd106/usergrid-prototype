@@ -8,10 +8,16 @@ define(["./utils/objectUtils"], function(objectUtils) {
         // Make properties available via array index
         var processRow = function(source, rowIndex, matrix) {
             matrix[rowIndex] = [];
-            var sourceRow = source[rowIndex];
-            var resultRow = matrix[rowIndex];
+            var sourceRow = source[rowIndex],
+                resultRow = matrix[rowIndex],
+                colIndex = 0;
             objectUtils.forEachProperty(sourceRow, function(obj, prop, count) {
-                resultRow[count] = obj[prop];
+                resultRow[count] = {
+                    row: rowIndex,
+                    col: colIndex,
+                    count: obj[prop]
+                };
+                colIndex++;
             });
         };
         
@@ -54,7 +60,7 @@ define(["./utils/objectUtils"], function(objectUtils) {
         matrix.max = function() {
             var max = 0;
             forEachElement(this, function(val, rowIndex, colIndex) {
-                max = Math.max(max, val);
+                max = Math.max(max, val.count);
             });
             return max;
         };
@@ -62,10 +68,10 @@ define(["./utils/objectUtils"], function(objectUtils) {
         matrix.threshold = function(min, max) {
             var current;
             forEachElement(this, function(val, rowIndex, colIndex) {
-                current = val;
+                current = val.count;
                 current = Math.max(current, min);
                 current = Math.min(current, max);
-                matrix[rowIndex][colIndex] = current;
+                matrix[rowIndex][colIndex].count = current;
             });
         };
 

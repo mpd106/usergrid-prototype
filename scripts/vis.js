@@ -1,10 +1,10 @@
-/* global require, console */
+/* global document, require, console */
 
 require.config({
     paths : { d3: "http://d3js.org/d3.v3.min" },
     config : {
         "datasources/generativeDatasource" : {
-            numberOfEvents : 10,
+            numberOfEvents : 3,
             numberOfUsers  : 50
         },
         "datasources/d3datasource" : {
@@ -17,7 +17,8 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
         function(d3, datasource, objectUtils, matrix, d3colorscale, d3axes) {
     var chartWidth = 800,
         maxElementDimension = 20,
-        margin = {top: 20, right: 20, bottom: 20, left: 40};
+        margin = {top: 20, right: 20, bottom: 20, left: 20},
+        headerPad = 10;
 
     var setChartArea = function(chart, width, height) {        
         chart.attr("width", width + margin.left + margin.right)
@@ -38,6 +39,10 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
             width : objectUtils.numProperties(data[0]) * elementSize
         };
     };
+            
+    var calculateAxisWidth = function(axis) {
+          
+    };
     
     var getRowYPos = function(i, elementSize) {
         var y = margin.top + i * elementSize;
@@ -57,6 +62,75 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
             return "translate(" + x + ", " + y + ")";
         }
     };
+    
+    var computeEventHeadersHeight = function(headers) {
+            var headerDimensions = headers.node().getBBox(),
+            headerHeight = headerDimensions.height;
+        
+        return headerHeight;
+    };
+
+    var addEventHeaders = function(chart, dimensions, m, elementSize) {        
+        chart.append("g")
+            .attr("class", "event-headers")
+          .selectAll("text")
+            .data(m.colNames)
+          .enter()
+            .append("g")
+            .attr("transform", function(d, i) {
+                var translation = svgHelpers.translate(getColXPos(i, elementSize) + elementSize / 2, 0),
+                    rotation = "rotate(90)";
+                return translation + ' ' + rotation;
+            })
+            .append("text")
+            .attr("style", "writing-mode: rl")
+            .attr("style", "alignment-baseline: middle")
+            .attr("text-anchor", "end")
+            .text(function(d) { return d; });
+        
+        var headers = chart.select("g.event-headers");
+        var headerHeight = computeEventHeadersHeight(headers);
+        
+        headers.attr("transform", function(d, i) {
+            return svgHelpers.translate(0, margin.top + headerHeight);
+        });
+    };
+      
+    var renderRows = function(chart, mat, elementSize, scale) {
+        var headers = chart.select("g.event-headers");
+        var headerHeight = computeEventHeadersHeight(headers);
+        
+        var rows = chart.selectAll(".row")
+            .data(mat)
+          .enter()
+            .append("g")
+            .attr("transform", function(d, i) {
+                var y = margin.top + headerHeight + headerPad + i * elementSize;
+                return svgHelpers.translate(0, y);})
+            .attr("class", "row")
+            .each(function(row) { renderRow(this, row, elementSize, scale); });
+    };
+            
+    var renderRow = function(selection, rowData, elementSize, scale) {
+        var cells = d3.select(selection).selectAll(".cell")
+            .data(rowData)
+          .enter()
+            .append("rect")
+            .attr("class", "cell")
+            .attr("x", function(d, i) {
+                return getColXPos(i, elementSize);
+            })
+            .attr("width", elementSize)
+            .attr("height", elementSize)
+            .attr("fill", function(d) {
+                return getElementColour(scale, d.count);
+            });
+    };
+            
+    var renderChart = function(chart, dimensions, m, elementSize, scale) {
+        addEventHeaders(chart, dimensions, m, elementSize);
+        renderRows(chart, m, elementSize, scale);
+    };
             
     datasource.getData(function(error, data) {
         var chart = d3.select(".chart");
@@ -69,57 +143,7 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
         setChartArea(chart, dimensions.width, dimensions.height);
         
         var scale = d3colorscale.getScale(m);
-        var xAxis = d3.svg.axis()
-            .scale(d3axes.getAxisScale(m.colNames, elementSize))
-            .orient("top");
-        
-        // Add xAxis
-/*        
-        chart.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(" + 50 + ", " + 10 + ")")
-            .call(xAxis)
-          .selectAll("text")  
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", function(d) {
-                return "rotate(-90)" ;
-            });
-*/        
-        // Better xAxis
-        chart.append("g")
-            .attr("class", "x axis")
-          .selectAll("text")
-            .data(m.colNames)
-          .enter()
-            .append("g")
-            .attr("transform", function(d, i) {
-                var translation = svgHelpers.translate(getColXPos(i, elementSize) + elementSize / 2, 0),
-                    rotation = "rotate(90)";
-                return translation;
-            })
-            .append("text")
-            .attr("style", "writing-mode: tb")
-            .text(function(d) { return d; });
-        
-        // Add rows
-        var rows = chart.selectAll("g")
-            .data(m)
-          .enter()
-            .append("g")
-            .attr("transform", function(d, i) { return getRowYPos(i, elementSize); });
 
-        // Add each element to each row
-        var cols = rows.selectAll("g g")
-            .data(function(d) {
-                return d;
-            })
-          .enter()
-            .append("rect")
-            .attr("x", function(d, i) { return getColXPos(i, elementSize); })
-            .attr("width", elementSize)
-            .attr("height", elementSize)
-            .attr("fill", function(d) { return getElementColour(scale, d); });
+        renderChart(chart, dimensions, m, elementSize, scale);
     });
 });
