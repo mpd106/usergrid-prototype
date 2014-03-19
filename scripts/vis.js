@@ -22,7 +22,7 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
 
     var setChartArea = function(chart, width, height) {        
         chart.attr("width", width + margin.left + margin.right)
-             .attr("height", height + margin.top + margin.bottom);
+             .attr("height", height);
     };
 
     var calculateElementSize = function(data) {
@@ -35,13 +35,10 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
             
     var calculateChartArea = function(data, elementSize) {
         return {
-            height : data.length * elementSize,
+            // TODO: below needs header size
+            height : margin.top + margin.bottom + headerPad + data.length * elementSize,
             width : objectUtils.numProperties(data[0]) * elementSize
         };
-    };
-            
-    var calculateAxisWidth = function(axis) {
-          
     };
     
     var getRowYPos = function(i, elementSize) {
