@@ -13,42 +13,8 @@ require.config({
     }
 });
 
-require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix", "d3colorscale", "d3axes"],
-        function(d3, datasource, objectUtils, matrix, d3colorscale, d3axes) {
-    var chartWidth = 800,
-        maxElementDimension = 20,
-        margin = {top: 20, right: 20, bottom: 20, left: 20},
-        headerPad = 10;
-
-    var setChartArea = function(chart, width, height) {        
-        chart.attr("width", width + margin.left + margin.right)
-             .attr("height", height);
-    };
-
-    var calculateElementSize = function(data) {
-        var numColumns = objectUtils.numProperties(data[0]),
-            idealElementSize = chartWidth / numColumns,
-            elementSize = Math.min(maxElementDimension, idealElementSize);
-        
-        return elementSize;
-    };
-            
-    var calculateChartArea = function(data, elementSize) {
-        return {
-            // TODO: below needs header size
-            height : margin.top + margin.bottom + headerPad + data.length * elementSize,
-            width : objectUtils.numProperties(data[0]) * elementSize
-        };
-    };
-    
-    var getRowYPos = function(i, elementSize) {
-        var y = margin.top + i * elementSize;
-        return svgHelpers.translate(0, y);
-    };
-    
-    var getColXPos = function (i, elementSize) {
-        return margin.left + i * elementSize;
-    };
+require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix", "d3colorscale", "d3axes", "d3dimensions", "grid"],
+        function(d3, datasource, objectUtils, matrix, d3colorscale, d3axes, d3dimensions, grid) {
     
     var getElementColour = function(scale, d) {
         return scale(d);
@@ -59,23 +25,17 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
             return "translate(" + x + ", " + y + ")";
         }
     };
-    
-    var computeEventHeadersHeight = function(headers) {
-            var headerDimensions = headers.node().getBBox(),
-            headerHeight = headerDimensions.height;
-        
-        return headerHeight;
-    };
 
-    var addEventHeaders = function(chart, dimensions, m, elementSize) {        
+    var renderHeaders = function(chart, colNames, elementSize, grd) {
         chart.append("g")
             .attr("class", "event-headers")
           .selectAll("text")
-            .data(m.colNames)
+            .data(colNames)
           .enter()
             .append("g")
             .attr("transform", function(d, i) {
-                var translation = svgHelpers.translate(getColXPos(i, elementSize) + elementSize / 2, 0),
+                var x = grd.getColXPos(i, elementSize) + elementSize / 2;
+                var translation = svgHelpers.translate(x, 0),
                     rotation = "rotate(90)";
                 return translation + ' ' + rotation;
             })
@@ -85,37 +45,38 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
             .attr("text-anchor", "end")
             .text(function(d) { return d; });
         
-        var headers = chart.select("g.event-headers");
-        var headerHeight = computeEventHeadersHeight(headers);
+        var header = chart.select("g.event-headers");
+        var headerHeight = d3dimensions.getHeaderHeight(chart);
+        var origin = d3dimensions.getOrigin();
         
-        headers.attr("transform", function(d, i) {
-            return svgHelpers.translate(0, margin.top + headerHeight);
+        header.attr("transform", function(d, i) {
+            return svgHelpers.translate(0, origin.y + headerHeight);
         });
     };
       
-    var renderRows = function(chart, mat, elementSize, scale) {
-        var headers = chart.select("g.event-headers");
-        var headerHeight = computeEventHeadersHeight(headers);
+    var renderRows = function(chart, mat, elementSize, scale, grd) {
+        var headerHeight = d3dimensions.getHeaderHeight(chart),
+            origin = d3dimensions.getGridOrigin(chart);
         
         var rows = chart.selectAll(".row")
             .data(mat)
           .enter()
             .append("g")
             .attr("transform", function(d, i) {
-                var y = margin.top + headerHeight + headerPad + i * elementSize;
+                var y = origin.y + i * elementSize;
                 return svgHelpers.translate(0, y);})
             .attr("class", "row")
-            .each(function(row) { renderRow(this, row, elementSize, scale); });
+            .each(function(row) { renderRow(this, row, elementSize, scale, grd); });
     };
             
-    var renderRow = function(selection, rowData, elementSize, scale) {
+    var renderRow = function(selection, rowData, elementSize, scale, grd) {
         var cells = d3.select(selection).selectAll(".cell")
             .data(rowData)
           .enter()
             .append("rect")
             .attr("class", "cell")
             .attr("x", function(d, i) {
-                return getColXPos(i, elementSize);
+                return grd.getColXPos(i, elementSize);
             })
             .attr("width", elementSize)
             .attr("height", elementSize)
@@ -124,23 +85,23 @@ require(["d3", "datasources/generativeDatasource", "utils/objectUtils", "matrix"
             });
     };
             
-    var renderChart = function(chart, dimensions, m, elementSize, scale) {
-        addEventHeaders(chart, dimensions, m, elementSize);
-        renderRows(chart, m, elementSize, scale);
+    var renderChart = function(chart, mat, elementSize, grd, scale) {
+        renderHeaders(chart, mat.colNames, elementSize, grd);
+        renderRows(chart, mat, elementSize, scale, grd);
     };
             
     datasource.getData(function(error, data) {
-        var chart = d3.select(".chart");
-        var elementSize = calculateElementSize(data);
-        var dimensions = calculateChartArea(data, elementSize);
+        var mat = matrix.create(data),
+            chart = d3.select(".chart"),
+            elementSize = d3dimensions.getElementSize(data),
+            origin = d3dimensions.getOrigin(),
+            grd = grid.init(origin, elementSize),
+            scale = d3colorscale.getScale(mat);
         
-        var m = matrix.create(data);
-        m.threshold(0, 50);
+        renderChart(chart, mat, elementSize, grd, scale);
         
-        setChartArea(chart, dimensions.width, dimensions.height);
-        
-        var scale = d3colorscale.getScale(m);
-
-        renderChart(chart, dimensions, m, elementSize, scale);
+        mat.threshold(0, 50);
+        d3dimensions.setupChartArea(chart, data);
+        d3dimensions.setupChartArea(chart, data);
     });
 });
