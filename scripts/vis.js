@@ -13,12 +13,12 @@ require.config({
     }
 });
 
-require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3dimensions", "d3headerFactory", "d3gridFactory"],
+require(["d3", "datasources/d3datasource", "matrix", "d3colorscale", "d3dimensions", "d3headerFactory", "d3gridFactory"],
         function(d3, datasource, matrix, d3colorscale, d3dimensions, d3headerFactory, d3gridFactory) {
     datasource.getData(function(error, data) {
         var mat = matrix.create(data),
             chart = d3.select(".chart"),
-            // TODO: Pull this from the grd, or something
+            // TODO: Put this in a config somewhere
             dimensions = d3dimensions.init({top: 10, left: 10, bottom: 10, right: 10}),
             elementSize = dimensions.getElementSize(data),
             origin = dimensions.getOrigin(),
@@ -37,6 +37,7 @@ require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3
         gridOrigin = dimensions.getGridOrigin(chart, headerHeight);
         
         mat.threshold(0, 50);
+        mat.sortByColumn(19, "desc");
         scale = d3colorscale.getScale(mat);
         // can only create the grid once we've rendered the header--ugh
         d3grid = d3gridFactory.create(gridOrigin, elementSize);

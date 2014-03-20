@@ -74,6 +74,22 @@ define(["./utils/objectUtils"], function(objectUtils) {
                 matrix[rowIndex][colIndex].count = current;
             });
         };
+        
+        matrix.sortByColumn = function(colIndex, direction) {
+            var sign = direction === "desc" ? 1 : -1;
+            return matrix.sort(function(a, b) {
+                var aVal = a[colIndex].count,
+                    bVal = b[colIndex].count;
+
+                if (aVal < bVal) {
+                    return sign;
+                } else if (aVal > bVal) {
+                    return -sign;
+                }
+
+                return 0;
+            });
+        };
 
         return matrix;
     };

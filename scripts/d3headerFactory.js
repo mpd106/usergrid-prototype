@@ -26,7 +26,9 @@ define(["./utils/svgHelpers"], function(svgHelpers) {
                 .append("text")
                 .attr("style", "writing-mode: rl")
                 .attr("style", "alignment-baseline: middle")
+                .attr("style", "cursor:pointer")
                 .attr("text-anchor", "end")
+                .on("click", function() { alert("click!"); })
                 .text(function(d) { return d; });
 
             header = chart.select("g.event-headers");
