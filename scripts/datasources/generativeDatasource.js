@@ -46,7 +46,7 @@ define(["module", "../d3", "../utils/objectUtils"], function(module, d3, objectU
     var generateRandomUser = function(eventNames) {
         var eventName,
             user = {},
-            max = 100;
+            max = 50;
         for (eventName in eventNames) {
             if (eventNames.hasOwnProperty(eventName)) {
                 user[eventName] = randomInt(0, max);

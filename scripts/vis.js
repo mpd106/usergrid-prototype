@@ -22,12 +22,12 @@ require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3
             dimensions = d3dimensions.init({top: 10, left: 10, bottom: 10, right: 10}),
             elementSize = dimensions.getElementSize(data),
             origin = dimensions.getOrigin(),
-            scale = d3colorscale.getScale(mat),
             headerOrigin,
             headerHeight,
             d3header,
             d3grid,
-            gridOrigin;
+            gridOrigin,
+            scale;
         
         headerOrigin = dimensions.getOrigin();
         d3header = d3headerFactory.create(headerOrigin, elementSize);
@@ -37,6 +37,7 @@ require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3
         gridOrigin = dimensions.getGridOrigin(chart, headerHeight);
         
         mat.threshold(0, 50);
+        scale = d3colorscale.getScale(mat);
         // can only create the grid once we've rendered the header--ugh
         d3grid = d3gridFactory.create(gridOrigin, elementSize);
         d3grid.renderGrid(chart, mat, scale, d3header.getHeaderHeight(chart));
