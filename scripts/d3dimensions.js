@@ -5,6 +5,7 @@ define(["./utils/objectUtils"], function(objectUtils) {
         // TODO: pass these into a constructor / make it configurable
         // TODO: separate d3-related stuff from conceptual stuff (i.e. chart from data in here)
         // TODO: memoize the calculations in here
+        // TODO: this entire object is gash--bin it
         var chartWidth = 800,
             maxElementDimension = 20,
             headerPad = 10;
@@ -14,7 +15,6 @@ define(["./utils/objectUtils"], function(objectUtils) {
                  .attr("height", height);
         };
 
-        // good
         var calculateElementSize = function(data) {
             var numColumns = objectUtils.numProperties(data[0]),
                 idealElementSize = chartWidth / numColumns,
@@ -22,7 +22,6 @@ define(["./utils/objectUtils"], function(objectUtils) {
 
             return elementSize;
         };
-
 
         var calculateChartArea = function(gridArea, elementSize, headerHeight) {
             return {

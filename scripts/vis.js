@@ -13,14 +13,8 @@ require.config({
     }
 });
 
-require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3dimensions", "grid", "d3header", "d3grid"],
-        function(d3, datasource, matrix, d3colorscale, d3dimensions, grid, d3header, d3grid) {
-            
-    var renderChart = function(chart, mat, elementSize, grd, scale) {
-        d3header.renderHeaders(chart, mat.colNames, grd);
-        d3grid.renderGrid(chart, mat, scale, grd, d3header.getHeaderHeight(chart));
-    };
-            
+require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3dimensions", "d3headerFactory", "d3gridFactory"],
+        function(d3, datasource, matrix, d3colorscale, d3dimensions, d3headerFactory, d3gridFactory) {
     datasource.getData(function(error, data) {
         var mat = matrix.create(data),
             chart = d3.select(".chart"),
@@ -28,12 +22,25 @@ require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3
             dimensions = d3dimensions.init({top: 10, left: 10, bottom: 10, right: 10}),
             elementSize = dimensions.getElementSize(data),
             origin = dimensions.getOrigin(),
-            grd = grid.init(origin, elementSize),
-            scale = d3colorscale.getScale(mat);
+            scale = d3colorscale.getScale(mat),
+            headerOrigin,
+            headerHeight,
+            d3header,
+            d3grid,
+            gridOrigin;
         
-        renderChart(chart, mat, elementSize, grd, scale);
+        headerOrigin = dimensions.getOrigin();
+        d3header = d3headerFactory.create(headerOrigin, elementSize);
+        d3header.renderHeaders(chart, mat.colNames);
+        
+        headerHeight = d3header.getHeaderHeight(chart);
+        gridOrigin = dimensions.getGridOrigin(chart, headerHeight);
         
         mat.threshold(0, 50);
+        // can only create the grid once we've rendered the header--ugh
+        d3grid = d3gridFactory.create(gridOrigin, elementSize);
+        d3grid.renderGrid(chart, mat, scale, d3header.getHeaderHeight(chart));
+        
         dimensions.setupChartArea(chart, data, d3header.getHeaderHeight(chart));
     });
 });
