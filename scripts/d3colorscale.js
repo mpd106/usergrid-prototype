@@ -1,4 +1,5 @@
 /* global define */
+
 define(["./d3", "./lib/colorbrewer"], function(d3, colorbrewer) {
     var calculateDomain = function(min, max, numElements) {
         var result = [],
