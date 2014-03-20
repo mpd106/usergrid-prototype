@@ -13,7 +13,7 @@ require.config({
     }
 });
 
-require(["d3", "datasources/d3datasource", "matrix", "d3colorscale", "d3dimensions", "d3headerFactory", "d3gridFactory"],
+require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3dimensions", "d3headerFactory", "d3gridFactory"],
         function(d3, datasource, matrix, d3colorscale, d3dimensions, d3headerFactory, d3gridFactory) {
     datasource.getData(function(error, data) {
         var mat = matrix.create(data),
