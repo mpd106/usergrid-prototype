@@ -3,9 +3,9 @@
 define(["module", "../d3", "../utils/objectUtils"], function(module, d3, objectUtils) {
     var config = module.config();
     
-    var productName = "handsome-matt";
-    var nouns = ["sprocket", "thingum", "spaffhammer", "meaty-totem", "brain-grass", "tooting-sphincter"];
-    var verbs = ["activated", "tickled", "vajazzled", "stoked"];
+    var productName = "application";
+    var nouns = ["sprocket", "matrix", "flux-capacitor", "warp-manifold"];
+    var verbs = ["activated", "inverted", "stoked", "cranked", "primed", "fired"];
     
     // TODO: Put this in some utils somewhere
     var randomInt = function(min, max) {

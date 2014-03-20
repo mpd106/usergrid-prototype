@@ -14,9 +14,8 @@ This project is intended to:
 
 ### todo
 
-- add column names
+- fix up the nasty codebase
 - sorting
 - selection of row
-- swap rows / columns?
 - configurable colours
-- somethign to do with generalizing on a selection (-> generate pattern for selection)
+- something to do with generalizing on a selection (-> generate pattern for selection)
