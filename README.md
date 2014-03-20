@@ -15,7 +15,16 @@ This project is intended to:
 ### todo
 
 - fix up the nasty codebase
-- sorting
-- selection of row
+- *stable* sort by event type
+- selection of column
 - configurable colours
 - something to do with generalizing on a selection (-> generate pattern for selection)
+- show detailed behaviour of user corresponding to row
+
+### done
+
+- basic grid
+- headers
+- generative / test datasource
+- csv datasource
+- sorting by event type
