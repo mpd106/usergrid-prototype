@@ -24,7 +24,9 @@ define(["d3", "utils/svgHelpers"], function(d3, svgHelpers) {
                     return getColXPos(i);
                 })
                 .attr("width", elementSize)
-                .attr("height", elementSize)
+                .attr("height", elementSize);
+            
+            cells = d3.select(selection).selectAll(".cell")
                 .attr("fill", function(d) {
                     return getElementColour(scale, d.count);
                 });
@@ -38,12 +40,20 @@ define(["d3", "utils/svgHelpers"], function(d3, svgHelpers) {
                 .attr("transform", function(d, i) {
                     var y = getRowYPos(i);
                     return svgHelpers.translate(0, y);})
-                .attr("class", "row")
+                .attr("class", "row");
+            
+            rows = chart.selectAll(".row")
                 .each(function(row) { renderRow(this, row, scale); });
         };
         
+        var refreshData = function(chart, mat) {
+            chart.selectAll(".row")
+                .data(mat);
+        };
+        
         return {
-            renderGrid: renderRows
+            renderGrid: renderRows,
+            refreshData: refreshData
         };
     };
     

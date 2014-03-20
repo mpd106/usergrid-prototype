@@ -27,14 +27,17 @@ define(["./utils/objectUtils"], function(objectUtils) {
             }
         };
         
-        var getColNames = function(source) {
-            var colNames = [];
+        var getColumnHeaders = function(source) {
+            var columnHeaders = [];
             var firstSourceRow = source[0];
             objectUtils.forEachProperty(firstSourceRow, function(obj, prop, index) {
-                colNames[index] = prop;
+                columnHeaders[index] = {
+                    text: prop,
+                    index: index
+                };
             });
             
-            return colNames;
+            return columnHeaders;
         };
         
         var forEachElement = function(matrix, callback) {
@@ -49,7 +52,7 @@ define(["./utils/objectUtils"], function(objectUtils) {
         };
         
         processRows(source, matrix);
-        matrix.colNames = getColNames(source);
+        matrix.columnHeaders = getColumnHeaders(source);
         
         matrix.forEachElement = function(callback) {
             forEachElement(this, function(val, rowIndex, colIndex) {

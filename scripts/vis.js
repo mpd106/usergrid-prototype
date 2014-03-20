@@ -29,20 +29,27 @@ require(["d3", "datasources/d3datasource", "matrix", "d3colorscale", "d3dimensio
             gridOrigin,
             scale;
         
+        var setupSort = function(chart, mat, d3header, d3grid, scale) {
+            d3header.onHeaderClick(chart, function(header) {
+                mat.sortByColumn(header.index, "desc");
+                d3grid.renderGrid(chart, mat, scale, d3header.getHeaderHeight(chart));
+            });
+        };
+        
         headerOrigin = dimensions.getOrigin();
         d3header = d3headerFactory.create(headerOrigin, elementSize);
-        d3header.renderHeaders(chart, mat.colNames);
+        d3header.renderHeaders(chart, mat.columnHeaders);
         
         headerHeight = d3header.getHeaderHeight(chart);
         gridOrigin = dimensions.getGridOrigin(chart, headerHeight);
         
         mat.threshold(0, 50);
-        mat.sortByColumn(19, "desc");
         scale = d3colorscale.getScale(mat);
         // can only create the grid once we've rendered the header--ugh
         d3grid = d3gridFactory.create(gridOrigin, elementSize);
         d3grid.renderGrid(chart, mat, scale, d3header.getHeaderHeight(chart));
         
         dimensions.setupChartArea(chart, data, d3header.getHeaderHeight(chart));
+        setupSort(chart, mat, d3header, d3grid, scale);
     });
 });

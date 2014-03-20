@@ -20,16 +20,18 @@ define(["./utils/svgHelpers"], function(svgHelpers) {
                 .attr("transform", function(d, i) {
                     var x = getHeaderXPos(i, grd);
                     var translation = svgHelpers.translate(x, 0),
-                        rotation = svgHelpers.rotate(90);
+                        rotation = svgHelpers.rotate(-90);
                     return translation + ' ' + rotation;
                 })
+                .attr("class", "header")
+                .attr("style", "cursor:pointer")
                 .append("text")
                 .attr("style", "writing-mode: rl")
                 .attr("style", "alignment-baseline: middle")
-                .attr("style", "cursor:pointer")
-                .attr("text-anchor", "end")
-                .on("click", function() { alert("click!"); })
-                .text(function(d) { return d; });
+                .attr("text-anchor", "start")
+                .text(function(d) {
+                    return d.text;
+                });
 
             header = chart.select("g.event-headers");
             headerHeight = calculateHeaderHeight(chart);
@@ -54,9 +56,17 @@ define(["./utils/svgHelpers"], function(svgHelpers) {
             }
         };
         
+        var onHeaderClick = function(chart, callback) {
+            var headers = chart.selectAll(".header");
+            headers.on("click", function(header) {
+                callback(header);
+            });
+        };
+        
         return {
             renderHeaders: renderHeaders,
-            getHeaderHeight: calculateHeaderHeight
+            getHeaderHeight: calculateHeaderHeight,
+            onHeaderClick: onHeaderClick
         };
     };
     
