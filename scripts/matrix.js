@@ -1,6 +1,6 @@
 /* global define */
 
-define(["./utils/objectUtils"], function(objectUtils) {
+define(["./utils/objectUtils", "./utils/arrayUtils"], function(objectUtils, arrayUtils) {
     // TODO: prototype to reuse methods
     var create = function(source) {
         var matrix = [];
@@ -80,7 +80,7 @@ define(["./utils/objectUtils"], function(objectUtils) {
         
         matrix.sortByColumn = function(colIndex, direction) {
             var sign = direction === "desc" ? 1 : -1;
-            return matrix.sort(function(a, b) {
+            return matrix.insertionSort(function(a, b) {
                 var aVal = a[colIndex].count,
                     bVal = b[colIndex].count;
 
@@ -93,11 +93,15 @@ define(["./utils/objectUtils"], function(objectUtils) {
                 return 0;
             });
         };
+        
+        matrix.insertionSort = function(sortfunction) {
+            return arrayUtils.insertionSort(matrix, sortfunction);
+        };
 
         return matrix;
     };
     
     return {
-        create : create
+        create: create,
     };
 });

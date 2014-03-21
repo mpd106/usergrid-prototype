@@ -2,9 +2,6 @@
 
 define(["./utils/objectUtils"], function(objectUtils) {
     var init = function(margin) {
-        // TODO: pass these into a constructor / make it configurable
-        // TODO: separate d3-related stuff from conceptual stuff (i.e. chart from data in here)
-        // TODO: memoize the calculations in here
         // TODO: this entire object is gash--bin it
         var chartWidth = 900,
             maxElementDimension = 20,

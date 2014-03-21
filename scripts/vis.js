@@ -4,8 +4,8 @@ require.config({
     paths : { d3: "http://d3js.org/d3.v3.min" },
     config : {
         "datasources/generativeDatasource" : {
-            numberOfEvents : 9,
-            numberOfUsers  : 60
+            numberOfEvents : 100,
+            numberOfUsers  : 500
         },
         "datasources/d3datasource" : {
             csvPath : "all data no minimum usage 10-03-2014.csv"
@@ -13,7 +13,7 @@ require.config({
     }
 });
 
-require(["d3", "datasources/generativeDatasource", "matrix", "d3colorscale", "d3dimensions", "d3headerFactory", "d3gridFactory"],
+require(["d3", "datasources/d3datasource", "matrix", "d3colorscale", "d3dimensions", "d3headerFactory", "d3gridFactory"],
         function(d3, datasource, matrix, d3colorscale, d3dimensions, d3headerFactory, d3gridFactory) {
     datasource.getData(function(error, data) {
         var mat = matrix.create(data),
