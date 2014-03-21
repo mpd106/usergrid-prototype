@@ -15,8 +15,8 @@ This project is intended to:
 ### todo
 
 - fix up the nasty codebase
-- *stable* sort by event type
 - selection of column
+- disable / re-enable columns
 - configurable colours
 - something to do with generalizing on a selection (-> generate pattern for selection)
 - show detailed behaviour of user corresponding to row
@@ -28,3 +28,4 @@ This project is intended to:
 - generative / test datasource
 - csv datasource
 - sorting by event type
+- *stable* sort by event type
